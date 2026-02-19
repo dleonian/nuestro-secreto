@@ -3,18 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Un mensaje para vos</title>
+<title>Para vos ❤️</title>
 
 <style>
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: #0f0f14;
+    background: #0b0b12;
     color: white;
     overflow-x: hidden;
 }
 
-/* Pantalla de bloqueo */
 #lockScreen {
     display: flex;
     flex-direction: column;
@@ -47,11 +46,15 @@ button:hover {
     background: #666;
 }
 
-/* Contenido */
+#error {
+    color: #ff6b6b;
+    margin-top: 10px;
+}
+
 #content {
     display: none;
     padding: 20px;
-    animation: fadeIn 1.5s ease-in forwards;
+    animation: fadeIn 2s ease forwards;
 }
 
 @keyframes fadeIn {
@@ -63,13 +66,14 @@ button:hover {
 .marquee {
     white-space: nowrap;
     overflow: hidden;
-    box-sizing: border-box;
+    margin-bottom: 30px;
 }
 
 .marquee span {
     display: inline-block;
     padding-left: 100%;
-    animation: marquee 20s linear infinite;
+    animation: marquee 25s linear infinite;
+    opacity: 0.7;
 }
 
 @keyframes marquee {
@@ -79,10 +83,11 @@ button:hover {
 
 /* Carta */
 #letter {
-    margin-top: 40px;
-    font-size: 18px;
-    line-height: 1.6;
-    min-height: 150px;
+    font-size: 17px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    max-width: 800px;
+    margin: auto;
 }
 
 /* Partículas */
@@ -102,22 +107,43 @@ canvas {
     <h2>Ingresa la clave</h2>
     <input type="password" id="password" placeholder="••••••••">
     <button onclick="checkPassword()">Entrar</button>
-    <p id="error" style="color:red;"></p>
+    <p id="error"></p>
 </div>
 
 <div id="content">
     <div class="marquee">
-        <span>
-             Amorosa • Valiente • Dulce • Fuerte • Leal • Sensible • Inteligente • Empática • Radiante • Honesta • Inspiradora • Paciente • Noble • Apasionada • Creativa • Resiliente • Compasiva • Auténtica • Luminosamente única • Amorosa • Valiente • Dulce • Fuerte • Leal • Sensible • Inteligente • Empática • Radiante • Honesta • Inspiradora • Paciente • Noble • Apasionada • Creativa • Resiliente • Compasiva • Auténtica • Luminosamente única •
-        </span>
+        <span>Amorosa • Valiente • Dulce • Fuerte • Leal • Sensible • Inteligente • Empática • Radiante • Honesta • Inspiradora • Paciente • Noble • Apasionada • Creativa • Resiliente • Compasiva • Auténtica • Luminosamente única • Amorosa • Valiente • Dulce • Fuerte • Leal • Sensible • Inteligente • Empática • Radiante • Honesta • Inspiradora • Paciente • Noble • Apasionada • Creativa • Resiliente • Compasiva • Auténtica • Luminosamente única •</span>
     </div>
-
     <div id="letter"></div>
 </div>
 
+<audio id="bgMusic" src="teamo.mp3"></audio>
+
 <script>
 
+/* 🔐 HASH EXACTO */
 const EXPECTED_HASH = "da322e132b95720ce763bea8c499c543f619243bc6207162b014b5ebcbaf2a5f";
+
+/* Carta */
+const mainText = `No planeaba encontrarte. No estabas en mis mapas, ni en mis rutas, ni en esos planes que hacía creyendo tener el control de todo. Pero llegaste y derribaste las murallas, las barreras que me protegían, y entraste en mi vida.
+
+Apareciste así, como llegan las cosas que realmente importan: sin anunciarse, sin pedir permiso, sin advertir que estaban a punto de cambiarlo todo.
+
+Coincidimos en un cruce de caminos que parecía casual, aunque sospecho que nada de esto lo es. Desde entonces, tu presencia se siente como esas canciones que aparecen justo cuando más se necesitan… como un recuerdo nuevo que se acomoda en los rincones donde antes sólo había silencio.
+
+No planeaba encontrarte, pero hay encuentros que no entienden de planes: suceden, simplemente. Y lo que siento me dice que sos la pieza que faltaba en mi rompecabezas, ese que llevaba tanto tiempo inconcluso.
+
+Hoy sé que hay personas que llegan sin avisar, como si fueran destino. Y vos sos una de ellas.
+
+Desde que estás, los días tienen otro ritmo. Las horas parecen más ligeras, y hasta lo cotidiano se viste de un brillo distinto. Es como si tu presencia hubiera encendido luces en lugares que yo ni siquiera sabía que estaban a oscuras.
+
+Me sorprende cómo tu manera de mirar el mundo me invita a mirarlo también de otra forma. Tus palabras, incluso las más simples, se quedan resonando en mí como si fueran semillas que germinan en silencio.
+
+Hay momentos en los que pienso que todo lo vivido antes era sólo un preludio, una preparación para poder reconocerte cuando aparecieras. Como si cada paso, cada tropiezo, cada silencio, me hubiera conducido inevitablemente hacia este encuentro.
+
+Y aunque no sé qué caminos nos esperan, tengo la certeza de que tu compañía hace que cualquier destino valga la pena. Porque lo que importa no es el lugar al que lleguemos, sino la manera en que caminamos juntos...`;
+
+const signature = `\n\nTe Amo.\nDiego`;
 
 async function sha256(text) {
     const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -127,40 +153,49 @@ async function sha256(text) {
 }
 
 async function checkPassword() {
-    const input = document.getElementById("password").value;
+    const input = document.getElementById("password").value.trim();
     const hash = await sha256(input);
 
     if (hash === EXPECTED_HASH) {
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("content").style.display = "block";
-        startTyping();
         startMusic();
+        typeMainText();
     } else {
         document.getElementById("error").textContent = "Clave incorrecta";
     }
 }
 
 /* ✍️ Máquina de escribir */
-const text = "Hay momentos que cambian todo. Este es uno de ellos.";
 let i = 0;
-
-function startTyping() {
-    if (i < text.length) {
-        document.getElementById("letter").innerHTML += text.charAt(i);
+function typeMainText() {
+    if (i < mainText.length) {
+        document.getElementById("letter").innerHTML += mainText.charAt(i);
         i++;
-        setTimeout(startTyping, 40);
+        setTimeout(typeMainText, 25);
+    } else {
+        setTimeout(typeSignature, 800);
     }
 }
 
-/* 🎵 Música con fade-in */
-let player;
+/* Firma más lenta */
+let j = 0;
+function typeSignature() {
+    if (j < signature.length) {
+        document.getElementById("letter").innerHTML += signature.charAt(j);
+        j++;
+        setTimeout(typeSignature, 120);
+    }
+}
+
+/* 🎵 Música local con fade-in */
 function startMusic() {
-    player = new Audio("https://www.youtube.com/watch?v=69npN04PwL0");
-    player.volume = 0;
-    player.play().catch(()=>{});
+    const music = document.getElementById("bgMusic");
+    music.volume = 0;
+    music.play().catch(()=>{});
     let fade = setInterval(() => {
-        if (player.volume < 0.5) {
-            player.volume += 0.02;
+        if (music.volume < 0.6) {
+            music.volume += 0.02;
         } else {
             clearInterval(fade);
         }
@@ -171,46 +206,35 @@ function startMusic() {
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particles = [];
-
-for (let i = 0; i < 60; i++) {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2,
-        speed: Math.random() * 0.5
-    });
-}
-
-function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "rgba(255,255,255,0.3)";
-
-    particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        p.y -= p.speed;
-        if (p.y < 0) p.y = canvas.height;
-    });
-
-    requestAnimationFrame(animateParticles);
-}
-
-animateParticles();
-
-window.addEventListener("resize", () => {
+function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-});
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let particles = Array.from({length: 70}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2,
+    s: Math.random() * 0.4
+}));
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.y -= p.s;
+        if (p.y < 0) p.y = canvas.height;
+    });
+    requestAnimationFrame(animate);
+}
+animate();
+
 </script>
 
 </body>
 </html>
-
-
-
