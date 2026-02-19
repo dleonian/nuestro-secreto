@@ -116,14 +116,8 @@ canvas {
 </div>
 
 <script>
-// 🔐 HASH REAL SHA-256 de "4septiembre"
-const EXPECTED_HASH = "3c6e0b8a9c15224a8228b9a98ca1531d8b0c8a3d79042f2f20c4afb775401e5f";
 
-/* 
-Si querés verificar el hash real, podés usar:
-crypto.subtle.digest("SHA-256", new TextEncoder().encode("4septiembre"))
-y convertirlo a hex.
-*/
+const EXPECTED_HASH = "7f1a8e3b9a8d6c4c0d9e7a5f2c6b4f9e1d8c3a7b6e5f4c2d1a9b8c7d6e5f4a3";
 
 async function sha256(text) {
     const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -217,3 +211,4 @@ window.addEventListener("resize", () => {
 
 </body>
 </html>
+
