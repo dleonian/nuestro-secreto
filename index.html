@@ -117,7 +117,7 @@ canvas {
 
 <script>
 
-const EXPECTED_HASH = "7f1a8e3b9a8d6c4c0d9e7a5f2c6b4f9e1d8c3a7b6e5f4c2d1a9b8c7d6e5f4a3";
+const EXPECTED_HASH = "da322e132b95720ce763bea8c499c543f619243bc6207162b014b5ebcbaf2a5f";
 
 async function sha256(text) {
     const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -211,4 +211,5 @@ window.addEventListener("resize", () => {
 
 </body>
 </html>
+
 
