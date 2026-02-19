@@ -12,8 +12,18 @@ body {
     background: #0b0b12;
     color: white;
     overflow-x: hidden;
+    transition: background 1.5s ease;
 }
 
+body.unlocked {
+    background: 
+        linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+        url("fondo.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+    
 #lockScreen {
     display: flex;
     flex-direction: column;
@@ -169,6 +179,7 @@ async function checkPassword() {
     const hash = await sha256(input);
 
     if (hash === EXPECTED_HASH) {
+        document.body.classList.add("unlocked");
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("content").style.display = "block";
         startMusic();
@@ -260,4 +271,5 @@ animate();
 
 </body>
 </html>
+
 
